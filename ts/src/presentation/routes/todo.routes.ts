@@ -7,8 +7,8 @@ export class TodoRoutes implements IRoute {
     constructor(private todoUseCase: TodoUseCase) { }
 
     registerRoutes(httpServer: IHttpAdapter): void {
-        httpServer.get("/todos/:userId", async (req, res) => {
-            const todos = await this.todoUseCase.listAllTodo(req.params.id);
+        httpServer.get("/todos/:id", async (req, res) => {
+            const todos = await this.todoUseCase.listAllTodo(req.params!.id);
             res.json(todos);
         });
 
@@ -23,3 +23,4 @@ export class TodoRoutes implements IRoute {
         // });
     }
 }
+

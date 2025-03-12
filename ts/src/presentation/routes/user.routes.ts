@@ -13,7 +13,7 @@ export class UserRoutes implements IRoute {
         });
 
         httpServer.get("/users/:id", async (req, res) => {
-            const users = await this.userUseCase.getOneUser(req.params.id);
+            const users = await this.userUseCase.getOneUser(req.params!.id);
             res.json(users);
         });
 
@@ -23,7 +23,7 @@ export class UserRoutes implements IRoute {
         });
 
         httpServer.delete("/users/:id", async (req, res) => {
-            const result = await this.userUseCase.deleteUser(req.params.id);
+            const result = await this.userUseCase.deleteUser(req.params!.id);
             res.json(result);
         });
     }
