@@ -1,6 +1,12 @@
-// Inside tsconfig.json
 {
     "compilerOptions": {
-        "experimentalDecorators": true
+        "target": "ES6",
+        "module": "CommonJS",
+        "strict": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "skipLibCheck": true
     }
 }

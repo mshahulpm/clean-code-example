@@ -1,4 +1,4 @@
-import * as express from "express";
+import express from "express";
 import { IHttpAdapter } from "../interface/IHttpAdapter";
 import { Request, Response } from 'express'
 
