@@ -1,0 +1,6 @@
+// Inside tsconfig.json
+{
+    "compilerOptions": {
+        "experimentalDecorators": true
+    }
+}
