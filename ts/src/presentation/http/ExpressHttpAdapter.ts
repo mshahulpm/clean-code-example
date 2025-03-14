@@ -9,8 +9,8 @@ export class ExpressHttpAdapter implements IHttpAdapter {
         this.app.use(express.json());
     }
 
-    listen(port: number): void {
-        this.app.listen(port, () => console.log(`Server running on port ${port}`));
+    listen(port: number, message?: string): void {
+        this.app.listen(port, () => console.log(message));
     }
 
     private adaptRequest(req: Request): IHttpRequest {

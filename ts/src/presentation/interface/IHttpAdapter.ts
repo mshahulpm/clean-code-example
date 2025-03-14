@@ -14,7 +14,7 @@ export interface IHttpResponse {
 
 
 export interface IHttpAdapter {
-    listen(port: number): void;
+    listen(port: number, message?: string): void;
     get(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => void): void;
     post(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => void): void;
     put(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => void): void;
