@@ -13,6 +13,8 @@ import { MongoTodoRepository } from "./src/infra/db/mongo/MongoTodoRepository";
 import { ExpressHttpAdapter } from "./src/presentation/http/ExpressHttpAdapter";
 import { registerRoutes } from "./src/presentation/routes";
 import { MongoUserRepository } from "./src/infra/db/mongo/MongoUserRepository";
+import { UserController } from "./src/presentation/controllers/user.controller";
+import { TodoController } from "./src/presentation/controllers/todo.controller";
 
 // db 
 const mongoClient = new MongoClient('mongodb://localhost:27017/todo_clean')
@@ -28,6 +30,9 @@ const userRepository = new MongoUserRepository(mongoClient, 'todo_clean')
 const userUseCase = new UserUseCase(userRepository)
 const todoUseCase = new TodoUseCase(todoRepository)
 
+// controllers
+const userController = new UserController(userUseCase)
+const todoController = new TodoController(todoUseCase)
 // HTTP Adapter
 const httpServer = new ExpressHttpAdapter();
 
@@ -39,7 +44,7 @@ httpServer.get('/docs/swagger.json', (req, res) => {
     res.sendFile(__dirname + '/docs/swagger/swagger.json')
 })
 // Register Routes
-registerRoutes(httpServer, userUseCase, todoUseCase);
+registerRoutes(httpServer, userController, todoController);
 
 // Start Server
 httpServer.listen(3000, `Server is running on port 3000\ndocumentation : http://localhost:3000/docs`);

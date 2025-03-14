@@ -5,7 +5,7 @@ export class TodoUseCase {
 
     constructor(private readonly todoRepository: ITodoRepository) { }
 
-    async listAllTodo(userId: string) {
+    async getAllTodo(userId: string) {
         return await this.todoRepository.getAllTodo(userId)
     }
 
@@ -18,7 +18,7 @@ export class TodoUseCase {
         return await this.todoRepository.saveTodo(todo)
     }
 
-    async updataTodo(todoId: string, userId: string, todo: Omit<Partial<Todo>, 'todoId'>) {
+    async updateTodo(todoId: string, userId: string, todo: Omit<Partial<Todo>, 'todoId'>) {
         return await this.todoRepository.updateTodo(todoId, userId, todo)
     }
 

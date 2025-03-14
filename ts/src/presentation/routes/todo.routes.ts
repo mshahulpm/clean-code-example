@@ -1,26 +1,18 @@
-import { TodoUseCase } from "../../application/usecase/todo.usecase";
+import { TodoController } from "../controllers/todo.controller";
 import { IHttpAdapter } from "../interface/IHttpAdapter";
 import { IRoute } from "../interface/IRoute";
 
 
 export class TodoRoutes implements IRoute {
-    constructor(private todoUseCase: TodoUseCase) { }
+    constructor(private todoController: TodoController) { }
 
     registerRoutes(httpServer: IHttpAdapter): void {
-        httpServer.get("/todos/:id", async (req, res) => {
-            const todos = await this.todoUseCase.listAllTodo(req.params!.id);
-            res.json(todos);
-        });
 
-        httpServer.post("/todos", async (req, res) => {
-            const todo = await this.todoUseCase.createTodo(req.body);
-            res.json(todo);
-        });
+        httpServer.post("/todos", this.todoController.createTodo);
+        httpServer.get("/todos", this.todoController.getAllTodos);
+        httpServer.get("/todos/:id", this.todoController.getTodoById)
+        httpServer.delete("/todos/:id", this.todoController.deleteTodo)
 
-        // httpServer.delete("/todos/:id", async (req, res) => {
-        //     const result = await this.todoUseCase.deleteTodo(req.params.id);
-        //     res.json(result);
-        // });
     }
 }
 
