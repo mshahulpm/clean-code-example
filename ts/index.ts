@@ -37,14 +37,17 @@ const todoController = new TodoController(todoUseCase)
 const httpServer = new ExpressHttpAdapter();
 
 // Swagger Docs
-httpServer.get('/docs', (req, res) => {
+httpServer.get('/docs', (_, res) => {
     res.sendFile(__dirname + '/docs/swagger/index.html')
 })
-httpServer.get('/docs/swagger.json', (req, res) => {
+httpServer.get('/docs/swagger.json', (_, res) => {
     res.sendFile(__dirname + '/docs/swagger/swagger.json')
 })
 // Register Routes
 registerRoutes(httpServer, userController, todoController);
+
+// error handel 
+httpServer.registerErrorHandle()
 
 // Start Server
 httpServer.listen(3000, `Server is running on port 3000\ndocumentation : http://localhost:3000/docs`);

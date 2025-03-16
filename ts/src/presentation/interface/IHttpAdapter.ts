@@ -9,14 +9,16 @@ export interface IHttpRequest {
 export interface IHttpResponse {
     status: (code: number) => IHttpResponse;
     json: (data: any) => IHttpResponse;
+    send: (data?: any) => void;
     sendFile: (filePath: string) => void;
 }
 
-
+export type RouteHandler = (req: IHttpRequest, res: IHttpResponse) => any | Promise<any>;
 export interface IHttpAdapter {
-    listen(port: number, message?: string): void;
-    get(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => void): void;
-    post(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => void): void;
-    put(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => void): void;
-    delete(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => void): void;
+    listen(port: number, message?: string): any;
+    get(path: string, handler: RouteHandler): any;
+    post(path: string, handler: RouteHandler): any;
+    put(path: string, handler: RouteHandler): any;
+    patch(path: string, handler: RouteHandler): any;
+    delete(path: string, handler: RouteHandler): any;
 }

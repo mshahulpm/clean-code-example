@@ -1,16 +1,14 @@
-import express, { Request, Response, Application } from "express";
+import express, { Request, Response, Application, NextFunction } from "express";
 import { IHttpAdapter, IHttpRequest, IHttpResponse } from "../interface/IHttpAdapter";
 import * as path from 'path'
+import { HttpException, InternalServerException } from "../../domain/exception/HttpException";
+
 export class ExpressHttpAdapter implements IHttpAdapter {
     private app: Application;
 
     constructor() {
         this.app = express();
         this.app.use(express.json());
-    }
-
-    listen(port: number, message?: string): void {
-        this.app.listen(port, () => console.log(message));
     }
 
     private adaptRequest(req: Request): IHttpRequest {
@@ -33,25 +31,86 @@ export class ExpressHttpAdapter implements IHttpAdapter {
                 res.json(data);
                 return this;
             },
+            send: (data?: any) => {
+                res.send(data)
+            },
             sendFile: (filePath: string) => {
                 res.sendFile(path.resolve(filePath));
             },
         };
     }
 
-    get(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => void): void {
-        this.app.get(path, (req, res) => handler(this.adaptRequest(req), this.adaptResponse(res)));
+    listen(port: number, message?: string): void {
+        this.app.listen(port, () => console.log(message));
     }
 
-    post(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => void): void {
-        this.app.post(path, (req, res) => handler(this.adaptRequest(req), this.adaptResponse(res)));
+    get(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => Promise<any> | any): any {
+        this.app.get(path, async (req, res, next) => {
+            try {
+                await handler(this.adaptRequest(req), this.adaptResponse(res))
+            } catch (error) {
+                next(error)
+            }
+        });
     }
 
-    put(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => void): void {
-        this.app.put(path, (req, res) => handler(this.adaptRequest(req), this.adaptResponse(res)));
+    post(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => Promise<any> | any): any {
+        this.app.post(path, async (req, res, next) => {
+            try {
+                await handler(this.adaptRequest(req), this.adaptResponse(res))
+            } catch (error) {
+                next(error)
+            }
+        });
     }
 
-    delete(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => void): void {
-        this.app.delete(path, (req, res) => handler(this.adaptRequest(req), this.adaptResponse(res)));
+    patch(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => Promise<any> | any): any {
+        this.app.patch(path, async (req, res, next) => {
+            try {
+                await handler(this.adaptRequest(req), this.adaptResponse(res))
+            } catch (error) {
+                next(error)
+            }
+        });
     }
+
+    put(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => Promise<any> | any): any {
+        this.app.put(path, async (req, res, next) => {
+            try {
+                await handler(this.adaptRequest(req), this.adaptResponse(res))
+            } catch (error) {
+                next(error)
+            }
+        });
+    }
+
+    delete(path: string, handler: (req: IHttpRequest, res: IHttpResponse) => Promise<any> | any): any {
+        this.app.delete(path, async (req, res, next) => {
+            try {
+                await handler(this.adaptRequest(req), this.adaptResponse(res))
+            } catch (error) {
+                next(error)
+            }
+        });
+    }
+
+    registerErrorHandle() {
+        this.app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+
+            if (err instanceof HttpException) {
+                res.status(err.statusCode).json({
+                    message: err.message,
+                    errorCode: err.errorCode,
+                    statusCode: err.statusCode
+                })
+                return
+            }
+
+            // unhandled error
+            console.log(err.message);
+            res.json(new InternalServerException(err.message))
+
+        })
+    }
+
 }
